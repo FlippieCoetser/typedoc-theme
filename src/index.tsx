@@ -1,14 +1,31 @@
-import { Theme } from './Theme';
-import { Application, JSX } from 'typedoc';
+import {
+  Application,
+  JSX,
+  DefaultTheme,
+  PageEvent,
+  Reflection,
+  DefaultThemeRenderContext,
+  Options,
+} from 'typedoc';
 
-/**
- * Called by TypeDoc when loading this theme as a plugin. Should be used to define themes which
- * can be selected by the user.
- */
+import { icons } from './icon';
+
+export class Context extends DefaultThemeRenderContext {
+  constructor(theme: DefaultTheme, page: PageEvent<Reflection>, options: Options) {
+    super(theme, page, options);
+  }
+}
+
+export class Theme extends DefaultTheme {
+  override getRenderContext(pageEvent: PageEvent<Reflection>): Context {
+    return new Context(this, pageEvent, this.application.options);
+  }
+}
+
 export function load(app: Application) {
   app.renderer.hooks.on('head.end', () => (
     <script>
-      <JSX.Raw html="alert('hi!');" />
+      <JSX.Raw html="console.log('theme loaded');" />
     </script>
   ));
   app.renderer.defineTheme('my-theme', Theme);
