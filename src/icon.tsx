@@ -91,10 +91,10 @@ export const icons: Record<IconKind, () => JSX.Element> = {
   [ReflectionKind.Enum]: () =>
     kindIcon(
       ReflectionKind.Enum,
-      <path
-        d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z"
-        fill="var(--color-text)"
-      />,
+      <g>
+        <circle cx="10" cy="8" r="6" />
+        <circle cx="15" cy="15" r="6" />
+      </g>,
       'var(--color-ts-enum)',
     ),
   [ReflectionKind.EnumMember]() {
