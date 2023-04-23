@@ -9,11 +9,12 @@ import {
   RenderTemplate,
 } from 'typedoc';
 
-import { icons } from './icon';
+import { clearSeenIconCache, icons } from './icon';
 
 export class Context extends DefaultThemeRenderContext {
   constructor(theme: DefaultTheme, page: PageEvent<Reflection>, options: Options) {
     super(theme, page, options);
+    this.icons = icons;
   }
 }
 
@@ -25,6 +26,7 @@ export class Theme extends DefaultTheme {
     page: PageEvent<Reflection>,
     template: RenderTemplate<PageEvent<Reflection>>,
   ): string => {
+    clearSeenIconCache();
     return super.render(page, template);
   };
 }

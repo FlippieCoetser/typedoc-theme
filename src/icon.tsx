@@ -1,18 +1,13 @@
 import { ReflectionKind } from 'typedoc';
 import { JSX } from 'typedoc';
 
-const seenIcons = new Set<unknown>();
+const Icons = new Set<unknown>();
 
-export function clearSeenIconCache() {
-  seenIcons.clear();
-}
+export const clearSeenIconCache = () => Icons.clear();
 
-function cachedPart(key: string, svgPart: JSX.Element) {
-  if (seenIcons.has(key)) {
-    return <use href={`#icon-${key}`} />;
-  }
-
-  seenIcons.add(key);
+const cachedPart = (key: string, svgPart: JSX.Element) => {
+  Icons.has(key) && <use href={`#icon-${key}`} />;
+  Icons.add(key);
   return {
     ...svgPart,
     props: {
@@ -20,14 +15,16 @@ function cachedPart(key: string, svgPart: JSX.Element) {
       id: `icon-${key}`,
     },
   };
-}
+};
 
-const kindIcon = (
+type KindIconType = (
   kind: ReflectionKind,
   letterPath: JSX.Element,
   color: string,
-  circular = false,
-) => (
+  circular?: boolean,
+) => any;
+
+const kindIcon: KindIconType = (kind, letterPath, color, circular = false) => (
   <svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24">
     {cachedPart(
       `${kind}-path`,
@@ -39,17 +36,23 @@ const kindIcon = (
         y="1"
         width="22"
         height="22"
-        rx={circular ? '12' : '6'}
+        rx={circular ? '12' : '3'}
       />,
     )}
     {cachedPart(`${kind}-text`, letterPath)}
   </svg>
 );
 
-export const icons: Record<
-  ReflectionKind | 'chevronDown' | 'checkbox' | 'menu' | 'search' | 'chevronSmall' | 'anchor',
-  () => JSX.Element
-> = {
+export type IconKind =
+  | ReflectionKind
+  | 'chevronDown'
+  | 'checkbox'
+  | 'menu'
+  | 'search'
+  | 'chevronSmall'
+  | 'anchor';
+
+export const icons: Record<IconKind, () => JSX.Element> = {
   [ReflectionKind.Accessor]: () =>
     kindIcon(
       ReflectionKind.Accessor,
@@ -134,7 +137,6 @@ export const icons: Record<
   [ReflectionKind.Module]() {
     return this[ReflectionKind.Namespace]();
   },
-
   [ReflectionKind.Namespace]: () =>
     kindIcon(
       ReflectionKind.Namespace,
@@ -228,7 +230,7 @@ export const icons: Record<
   ),
   menu: () => (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-      {['3', '7', '11'].map((y) => (
+      {['3', '7', '11'].map(y => (
         <rect x="1" y={y} width="14" height="2" fill="var(--color-text)" />
       ))}
     </svg>
